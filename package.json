@@ -1,0 +1,24 @@
+{
+  "name": "employee_info_tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codequeen69/employee_info_tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codequeen69/employee_info_tracker/issues"
+  },
+  "homepage": "https://github.com/codequeen69/employee_info_tracker#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "inquirer": "^8.2.4"
+  }
+}
