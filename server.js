@@ -1,5 +1,5 @@
-const express = require('express');
 const inquirer = require('inquirer');
+const { viewDept, viewEmployees, viewRoles} =('./queries');
 
 promptQuestion = () => {
 return inquirer.prompt([
@@ -11,7 +11,7 @@ return inquirer.prompt([
     }
 ])
 .then((answer) =>{
-    switch(answer.option){
+    switch(answer.options){
         case 'View all departments':
         viewDept();
         break;
@@ -24,21 +24,16 @@ return inquirer.prompt([
             viewEmployees();
             break;
 
-        
-
     }
 })
+//.then(promptQuestion)
 };
 promptQuestion();
 
-function viewDept(){
 
-};
+// db.connect(err => {
+//     if (err) throw err;
+//     console.log('Database connected.');
+//     promptQuestion();
 
-function viewRoles(){
-
-};
-
-function viewEmployees(){
-
-};
+// });
