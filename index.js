@@ -60,4 +60,4 @@ promptQuestion();
 
 // });
 
-module.exports = { promptQuestion };
+module.exports.promptQuestion = promptQuestion;

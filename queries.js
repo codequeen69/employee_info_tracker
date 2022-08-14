@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
-const {promptQuestion} = require('./index');
+const index = require('./index');
 
 
 //connect to database
@@ -23,8 +23,8 @@ function viewDept(){
          const table = cTable.getTable(results);
          console.log(table);
      }
- )
- //.then(promptQuestion());
+ );
+promptQuestion();
 };
 
 function viewRoles(){
@@ -35,23 +35,34 @@ function viewRoles(){
             console.log(table);
         }
     );
+    promptQuestion();
 };
 
 function viewEmployees(){
-    connection.execute(
-        `SELECT * FROM employees;`,
-        function(err, results){
+   const sql = `SELECT employees.id,
+                employees.first_name,
+                employees.last_name,
+                roles.title,
+                department.dept_name AS department,
+                roles.salary,
+                CONCAT(manager.first_name,' ', manager.last_name) AS manager
+                FROM employees
+                LEFT JOIN roles ON employees.role_id = roles.id
+                LEFT JOIN department ON roles.department_id = department.id
+                LEFT JOIN employees manager ON employees.manager_id = manager.id`;
+        connection.query(sql, (err, results) =>{
             const table = cTable.getTable(results);
             console.log(table);
         }
     );
+    promptQuestion();
 };
 function addDept(){
     inquirer.prompt([
         {
             type: 'input',
             name: 'department',
-            message: 'What is the name of department you would like to add?'
+            message: 'What is the name of the department?'
         }  
 ])
 .then((answer) => {
@@ -72,17 +83,18 @@ function addRole(){
         {
             type: 'input',
             name: 'title',
-            message: 'What is the name of the role you would like to enter?'
+            message: 'What is the name of the role?'
         },
         { 
             type:'input',
             name: 'salary',
-            message: 'What is the salary of this role(without decimals or dollar signs)?'
+            message: 'What is the salary of the role (without decimals or dollar signs)?'
         },
         {
-            type:'input',
+            type:'list',
             name: 'id',
-            message: 'What is the id of the department this role falls under?'
+            message: 'Which department does this role belong to?',
+            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
         }
     ])
     .then((answer) =>{
@@ -104,12 +116,12 @@ function addEmployee(){
         {
          type:'input',
          name:'first',
-         message:'What is the first name of this employee?'
+         message:"What is the employee's first name?"
         },
         {
             type:'input',
             name: 'last',
-            message: 'What is the last name of this employee?'
+            message: "What is the employee's last name?"
         },
         {
             type: 'input',
@@ -136,6 +148,11 @@ function addEmployee(){
 };
 
 function updateEmpRole(){
+    inquirer.prompt([
+        {
+
+        }
+    ])
 
 };
 
