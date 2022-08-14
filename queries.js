@@ -16,30 +16,33 @@ const connection = mysql.createConnection(
     });
 
 
-function viewDept(){
- connection.execute(
-     `SELECT * FROM department;`,
-     function(err, results){
-         const table = cTable.getTable(results);
-         console.log(table);
-     }
- );
-promptQuestion();
-};
-
-function viewRoles(){
+function viewDept() {
     connection.execute(
-        `SELECT * FROM roles;`,
-        function(err, results){
+        `SELECT * FROM department;`,
+        function (err, results) {
             const table = cTable.getTable(results);
             console.log(table);
+            promptQuestion();
         }
     );
-    promptQuestion();
 };
 
-function viewEmployees(){
-   const sql = `SELECT employees.id,
+function viewRoles() {
+    connection.execute(
+        `SELECT * FROM roles;`,
+        function (err, results) {
+            const table = cTable.getTable(results);
+            console.log(table);
+            promptQuestion();
+        }
+    );
+};
+
+function viewEmployees() {
+    //creating the columns for the table with dot notation above FROM employees
+    //Below FROM employees I link the two tables together by their common field
+    const sql = `SELECT 
+                employees.id,
                 employees.first_name,
                 employees.last_name,
                 roles.title,
@@ -49,84 +52,99 @@ function viewEmployees(){
                 FROM employees
                 LEFT JOIN roles ON employees.role_id = roles.id
                 LEFT JOIN department ON roles.department_id = department.id
-                LEFT JOIN employees manager ON employees.manager_id = manager.id`;
-        connection.query(sql, (err, results) =>{
-            const table = cTable.getTable(results);
-            console.log(table);
-        }
+                LEFT JOIN employees manager ON employees.manager_id = manager.id
+                `;
+    connection.query(sql, (err, results) => {
+        //view console.table documentation for this info
+        const table = cTable.getTable(results);
+        console.log(table);
+        promptQuestion();
+    }
     );
-    promptQuestion();
 };
-function addDept(){
+function addDept() {
     inquirer.prompt([
         {
             type: 'input',
             name: 'department',
             message: 'What is the name of the department?'
-        }  
-])
-.then((answer) => {
-    const sql = `INSERT INTO department(dept_name)
+        }
+    ])
+        .then((answer) => {
+            const sql = `INSERT INTO department(dept_name)
     VALUES (?)`;
-    const dept = answer.department
-    connection.query(sql, dept, (err, results)=>{
-const table = cTable.getTable(results);
-console.log(table);
-viewDept();
-    }) 
-})
+            const dept = answer.department
+            connection.query(sql, dept, (err, results) => {
+                const table = cTable.getTable(results);
+                console.log(table);
+                viewDept();
+            })
+        })
 
 };
 
-function addRole(){
+function addRole() {
     inquirer.prompt([
         {
             type: 'input',
             name: 'title',
             message: 'What is the name of the role?'
         },
-        { 
-            type:'input',
+        {
+            type: 'input',
             name: 'salary',
             message: 'What is the salary of the role (without decimals or dollar signs)?'
-        },
-        {
-            type:'list',
-            name: 'id',
-            message: 'Which department does this role belong to?',
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
         }
     ])
-    .then((answer) =>{
-        const sql =`INSERT INTO roles(title, salary, department_id)
+        .then(answer => {
+            const deptSql = `SELECT department.id AS value, department.dept_name AS name FROM department`;
+            connection.query(deptSql, (err, result) => {
+                if (err) throw err;
+                const departmentNames = result;
+                console.log(departmentNames);
+
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'dept',
+                        message: 'Which department does this role belong to?',
+                        choices: departmentNames
+                    }
+                ])
+                    .then((answers) => {
+                        const sql = `INSERT INTO roles(title, salary, department_id)
         VALUES(?,?,?)`;
-        const role = [answer.title, answer.salary, answer.id];
-        connection.query(sql, role, (err, results) => {
-            const table = cTable.getTable(results);
-            console.log(table);
-            viewRoles();
+                        const role = [answer.title, answer.salary, answers.dept];
+                        connection.query(sql, role, (err, results) => {
+                            if (err) throw err;
+                            const table = cTable.getTable(results);
+                            console.log(table);
+                            viewRoles();
+                            promptQuestion();
+                        })
+
+                    })
+            })
         })
 
-    })
-    
 };
 
-function addEmployee(){
+function addEmployee() {
     inquirer.prompt([
         {
-         type:'input',
-         name:'first',
-         message:"What is the employee's first name?"
+            type: 'input',
+            name: 'first',
+            message: "What is the employee's first name?"
         },
         {
-            type:'input',
+            type: 'input',
             name: 'last',
             message: "What is the employee's last name?"
         },
         {
             type: 'input',
             name: 'roleId',
-            message:'What is the role id number of this employee?'
+            message: 'What is the role id number of this employee?'
         },
         {
             type: 'input',
@@ -134,20 +152,22 @@ function addEmployee(){
             message: 'What is the manager id number for this employee?'
         }
     ])
-    .then((answer) => {
-        const sql = `INSERT INTO employees(first_name, last_name, role_id, manager_id)
+        .then((answer) => {
+            const sql = `INSERT INTO employees(first_name, last_name, role_id, manager_id)
         VALUES (?,?,?,?)`;
-        const employee = [answer.first, answer.last, answer.roleId, answer.managerId];
+            const employee = [answer.first, answer.last, answer.roleId, answer.managerId];
 
-        connection.query(sql, employee, (err, results) => {
-            const table = cTable.getTable(results);
-            console.log(table);
-            viewEmployees();
+            connection.query(sql, employee, (err, results) => {
+                if (err) throw err;
+                const table = cTable.getTable(results);
+                console.log(table);
+                viewEmployees();
+                promptQuestion();
+            })
         })
-    })
 };
 
-function updateEmpRole(){
+function updateEmpRole() {
     inquirer.prompt([
         {
 
@@ -157,7 +177,7 @@ function updateEmpRole(){
 };
 
 
-module.exports =  {
+module.exports = {
     viewDept,
     viewRoles,
     viewEmployees,
