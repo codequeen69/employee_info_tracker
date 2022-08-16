@@ -5,16 +5,19 @@ const { viewDept,
     addDept,
     addRole,
     addEmployee,
-    updateEmpRole } = require ('./queries');
+    updateEmpRole,
+    deleteEmployee }  = require ('./queries');
 
 
 promptQuestion = () => {
+    console.log(
+        "================= WELCOME TO EMPLOYEE INFO TRACKER ================" )
  inquirer.prompt([
     {
         type: 'list',
         name: 'options',
         message: 'Please choose one of the following options.',
-        choices:['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role']
+        choices:['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Delete an employee', 'none']
     }
 ])
 .then((answer) =>{
@@ -46,18 +49,16 @@ promptQuestion = () => {
         case 'Update an employee role':
             updateEmpRole();
             break;
+        case 'Delete an employee':
+            deleteEmployee();
+            break;
+        case 'none':
+            console.log('Goodbye!')
+            process.exit();
     }
 })
-//.then(promptQuestion)
+
 };
 promptQuestion();
-
-
-// db.connect(err => {
-//     if (err) throw err;
-//     console.log('Database connected.');
-//     promptQuestion();
-
-// });
 
 module.exports.promptQuestion = promptQuestion;
