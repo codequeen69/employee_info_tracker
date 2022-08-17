@@ -6,7 +6,8 @@ const { viewDept,
     addRole,
     addEmployee,
     updateEmpRole,
-    deleteEmployee }  = require ('./queries');
+    deleteEmployee,
+    viewBudget}  = require ('./queries');
 
 
 promptQuestion = () => {
@@ -17,7 +18,7 @@ promptQuestion = () => {
         type: 'list',
         name: 'options',
         message: 'Please choose one of the following options.',
-        choices:['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Delete an employee', 'none']
+        choices:['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Delete an employee', 'View budget', 'none']
     }
 ])
 .then((answer) =>{
@@ -51,6 +52,9 @@ promptQuestion = () => {
             break;
         case 'Delete an employee':
             deleteEmployee();
+            break;
+        case 'View budget':
+            viewBudget()
             break;
         case 'none':
             console.log('Goodbye!')

@@ -271,7 +271,40 @@ AS name FROM employees `;
     })
 }
 
+function viewBudget() {
+    const deptSql = `SELECT department.id AS value, department.dept_name AS name FROM department`;
+    connection.query(deptSql, (err, result) => {
+        if (err) throw err;
+        const depart = result;
+        console.log(depart);
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'department',
+                message: 'Which department budget would you like to view?',
+                choices: depart
+            }
+        ])
+            //anything above the FROM is creating the columns use dot notation but can get data
+            //from any table. Anything below the FROM is delcaring which table and we will left join employees onto roles.
+            //roles.id = employees.role_id is what the two tables have in common
+            .then(answer => {
+                const budgetSql = `SELECT 
+                SUM (roles.salary) AS department_budget 
+                FROM roles LEFT JOIN employees 
+                ON roles.id = employees.role_id WHERE department_id =?`;
+                const budget = answer.department
+                connection.query(budgetSql, budget, (err, result) => {
+                    if (err) throw err;
+                    const table = cTable.getTable(result);
+                    console.log(table);
+                    promptQuestion();
+                })
+            })
+    })
+};
 
+//export the functions
 module.exports = {
     viewDept,
     viewRoles,
@@ -281,4 +314,5 @@ module.exports = {
     addEmployee,
     updateEmpRole,
     deleteEmployee,
+    viewBudget
 }
