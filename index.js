@@ -8,11 +8,11 @@ const { viewDept,
     updateEmpRole,
     deleteEmployee,
     viewBudget}  = require ('./queries');
-
-
-promptQuestion = () => {
     console.log(
         "================= WELCOME TO EMPLOYEE INFO TRACKER ================" )
+
+promptQuestion = () => {
+    
  inquirer.prompt([
     {
         type: 'list',

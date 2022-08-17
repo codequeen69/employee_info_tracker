@@ -101,7 +101,6 @@ function addRole() {
             connection.query(deptSql, (err, result) => {
                 if (err) throw err;
                 const departmentNames = result;
-                console.log(departmentNames);
 
                 inquirer.prompt([
                     {
@@ -121,7 +120,6 @@ function addRole() {
                             const table = cTable.getTable(results);
                             console.log(table);
                             viewRoles();
-                            promptQuestion();
                         })
 
                     })
@@ -148,7 +146,6 @@ function addEmployee() {
             connection.query(Sql, (err, result) => {
                 if (err) throw err;
                 const roleTitle = result;
-                console.log(roleTitle);
 
                 inquirer.prompt([
                     {
@@ -202,7 +199,6 @@ function updateEmpRole() {
     connection.query(sql, (err, result) => {
         if (err) throw err;
         const empName = result;
-        console.log(empName);
         inquirer.prompt([
             {
                 type: 'list',
@@ -217,7 +213,6 @@ function updateEmpRole() {
                 connection.query(sql, (err, result) => {
                     if (err) throw err;
                     const roleName = result;
-                    console.log(roleName);
                     inquirer.prompt([
                         {
                             type: 'list',
@@ -227,12 +222,12 @@ function updateEmpRole() {
                         }
                     ])
                         .then(answer2 => {
-                            const sql = `UPDATE employees SET role_id = ? WHERE id=?`;
-                            const role = [answer.name, answer2.role];
+                            const sql = `UPDATE employees SET role_id = ? WHERE id = ?`;
+                            const role = [answer2.role, answer.name];
                             connection.query(sql, role, (err, result) => {
                                 if (err) throw err;
                                 const table = cTable.getTable(result);
-                                console.log(table);
+                                //console.log(table);
                                 viewEmployees();
                             })
                         })
@@ -248,7 +243,6 @@ AS name FROM employees `;
     connection.query(managerSql, (err, result) => {
         if (err) throw err;
         const manName = result;
-        console.log(result)
 
         inquirer.prompt([
             {
@@ -276,7 +270,6 @@ function viewBudget() {
     connection.query(deptSql, (err, result) => {
         if (err) throw err;
         const depart = result;
-        console.log(depart);
         inquirer.prompt([
             {
                 type: 'list',
